@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+/gui/target/
+/share/target/
+/gui/gui.iml
+/tilgungsrechner.iml
+/calculator/target/
+/calculator/calculator.iml
+/share/share.iml
+/.idea/
