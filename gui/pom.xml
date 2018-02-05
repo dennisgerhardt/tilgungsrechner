@@ -12,6 +12,8 @@
 
     <properties>
         <maven.assembly.plugin.version>2.4</maven.assembly.plugin.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
