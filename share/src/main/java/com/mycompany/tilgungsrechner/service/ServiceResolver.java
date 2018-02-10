@@ -15,6 +15,7 @@ public final class ServiceResolver {
 
         SERVICES.put(IValidation.class, constructImplementation(IValidation.class.getSimpleName()));
         SERVICES.put(ICalculator.class, constructImplementation(ICalculator.class.getSimpleName()));
+        SERVICES.put(ISceneManager.class, constructImplementation(ISceneManager.class.getSimpleName()));
     }
 
     public static<T> T resolve(Class<T> key) {

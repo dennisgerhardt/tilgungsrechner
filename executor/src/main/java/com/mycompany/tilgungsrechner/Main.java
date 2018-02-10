@@ -24,6 +24,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         determineScreenResolution();
 
+        // running into problems if using scenemanager here
+        // because it will load the controller class via the fxml which uses this service again
         final InputStream inputStream = getClass().getResource("/input_form_view_de.properties").openStream();
         final ResourceBundle bundle = new PropertyResourceBundle(inputStream);
         final Parent root = FXMLLoader.load(getClass().getResource("/input_form_view.fxml"), bundle);
@@ -31,6 +33,10 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, width, height));
         primaryStage.setTitle(bundle.getString("title.text"));
         primaryStage.show();
+
+        if (inputStream != null) {
+            inputStream.close();
+        }
     }
 
     private void determineScreenResolution() {

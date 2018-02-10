@@ -4,23 +4,24 @@ import com.mycompany.tilgungsrechner.data.CalculatorInput;
 import com.mycompany.tilgungsrechner.data.CalculatorResult;
 import com.mycompany.tilgungsrechner.exception.ValidationException;
 import com.mycompany.tilgungsrechner.service.ICalculator;
+import com.mycompany.tilgungsrechner.service.ISceneManager;
 import com.mycompany.tilgungsrechner.service.IValidation;
 import com.mycompany.tilgungsrechner.service.ServiceResolver;
 import com.mycompany.tilgungsrechner.util.DateUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,12 +41,14 @@ public class InputFormController implements Initializable {
 
     private final IValidation validation;
     private final ICalculator calculator;
+    private final ISceneManager sceneManager;
 
     private Map<TextField, Boolean> canCalculationExecuteMap;
 
     public InputFormController() {
         validation = ServiceResolver.resolve(IValidation.class);
         calculator = ServiceResolver.resolve(ICalculator.class);
+        sceneManager = ServiceResolver.resolve(ISceneManager.class);
     }
 
     @Override
@@ -93,6 +96,13 @@ public class InputFormController implements Initializable {
 
         try {
             CalculatorResult calculatorResult = calculator.calculatePlan(calculatorInput);
+
+            final Parent resultViewer = sceneManager.get(ISceneManager.RESULT_VIEWER);
+
+            final Scene scene = new Scene(resultViewer);
+            final Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
         } catch (ValidationException e) {
             e.getValidationErrorCode();
         }
