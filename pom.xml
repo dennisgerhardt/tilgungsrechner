@@ -14,11 +14,13 @@
         <module>share</module>
         <module>calculator</module>
         <module>gui</module>
+        <module>executor</module>
     </modules>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.lang.level>1.8</java.lang.level>
+        <maven.compiler.source>${java.lang.level}</maven.compiler.source>
+        <maven.compiler.target>${java.lang.level}</maven.compiler.target>
     </properties>
 
 </project>

@@ -1,69 +1,107 @@
 package com.mycompany.tilgungsrechner.controller;
 
+import com.mycompany.tilgungsrechner.data.CalculatorInput;
 import com.mycompany.tilgungsrechner.data.CalculatorResult;
+import com.mycompany.tilgungsrechner.exception.ValidationException;
 import com.mycompany.tilgungsrechner.service.ICalculator;
 import com.mycompany.tilgungsrechner.service.IValidation;
 import com.mycompany.tilgungsrechner.service.ServiceResolver;
-import javafx.application.Application;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-
+import com.mycompany.tilgungsrechner.util.DateUtil;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
+import java.net.URL;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class InputFormController extends Application {
+public class InputFormController implements Initializable {
 
     @FXML
-    private TextField loanAmountField, durationOfDebitField, fixedDebitRateField, desiredRateField;
+    private TextField loanAmountField, durationOfDebitField, fixedDebitRateField, repaymentRateField;
 
     @FXML
     private DatePicker payoutDateField;
 
+    @FXML
+    private Label labelErrorLoanAmount, labelErrorFixedDebitRate, labelErrorRepaymentRate, labelErrorDurationOfDebit;
+
+    @FXML
+    private Button calculateButton;
+
     private final IValidation validation;
     private final ICalculator calculator;
 
-    private double width, height;
+    private Map<TextField, Boolean> canCalculationExecuteMap;
 
     public InputFormController() {
         validation = ServiceResolver.resolve(IValidation.class);
         calculator = ServiceResolver.resolve(ICalculator.class);
     }
 
-    public void start(final Stage primaryStage) throws Exception {
-        determineScreenResolution();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        payoutDateField.setValue(DateUtil.lastDayOfMonth(0));
+        calculateButton.setOnAction(this::startCalculationExecuted);
+        calculateButton.setDisable(true);
+        payoutDateField.setDisable(true);
 
-        final InputStream inputStream = getClass().getResource("/input_form_view_de.properties").openStream();
-        final ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-        final Parent root = FXMLLoader.load(getClass().getResource("/input_form_view.fxml"), bundle);
+        canCalculationExecuteMap = new HashMap<>(Stream.of(
+                new AbstractMap.SimpleEntry<>(loanAmountField, false),
+                new AbstractMap.SimpleEntry<>(fixedDebitRateField, false),
+                new AbstractMap.SimpleEntry<>(repaymentRateField, false),
+                new AbstractMap.SimpleEntry<>(durationOfDebitField, false)
+        ).collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));
 
-        primaryStage.setScene(new Scene(root, width, height));
-        primaryStage.setTitle(bundle.getString("title.text"));
-        primaryStage.show();
+        loanAmountField.focusedProperty().addListener((arg, oldVal, newVal) -> {
+            final boolean validLoanAmount = validation.validateLoanAmount(loanAmountField.getText());
+            syncGuiWithValidationResult(labelErrorLoanAmount, loanAmountField, validLoanAmount);
+        });
+        fixedDebitRateField.focusedProperty().addListener((arg, oldVal, newVal) -> {
+            final boolean validFixedDebitRate = validation.validatePercentage(fixedDebitRateField.getText());
+            syncGuiWithValidationResult(labelErrorFixedDebitRate, fixedDebitRateField, validFixedDebitRate);
+        });
+        repaymentRateField.focusedProperty().addListener((arg, oldVal, newVal) -> {
+            final boolean validRepaymentRate = validation.validatePercentage(repaymentRateField.getText());
+            syncGuiWithValidationResult(labelErrorRepaymentRate, repaymentRateField, validRepaymentRate);
+        });
+        durationOfDebitField.focusedProperty().addListener((arg, oldVal, newVal) -> {
+            final boolean validDurationOfDebit = validation.validateDuration(durationOfDebitField.getText());
+            syncGuiWithValidationResult(labelErrorDurationOfDebit, durationOfDebitField, validDurationOfDebit);
+        });
+
+        Arrays.stream(
+            new Label[]{labelErrorLoanAmount, labelErrorFixedDebitRate, labelErrorRepaymentRate, labelErrorDurationOfDebit}
+        ).forEach(label -> label.setVisible(false));
     }
 
-    @FXML
     protected void startCalculationExecuted(ActionEvent actionEvent) {
+        CalculatorInput calculatorInput = new CalculatorInput(loanAmountField.getText(),
+                durationOfDebitField.getText(),
+                fixedDebitRateField.getText(),
+                repaymentRateField.getText(),
+                payoutDateField.getValue().toString());
 
-        System.out.println(validation.validate(durationOfDebitField.getText()));
-
-        CalculatorResult calculatorResult = calculator.calculatePlan(null);
-
-        loanAmountField.setText("" + calculatorResult.getValue());
+        try {
+            CalculatorResult calculatorResult = calculator.calculatePlan(calculatorInput);
+        } catch (ValidationException e) {
+            e.getValidationErrorCode();
+        }
     }
 
-    private void determineScreenResolution() {
-        final Rectangle2D bounds = Screen.getPrimary().getBounds();
-        this.width = bounds.getWidth() / 2;
-        this.height = bounds.getHeight() / 2;
+    private void syncGuiWithValidationResult(final Label label, final TextField field, final boolean result) {
+        label.setVisible(!result);
+        canCalculationExecuteMap.put(field, result);
+        final long count = canCalculationExecuteMap.entrySet().stream().filter(v -> v.getValue() == false).count();
+        calculateButton.setDisable(count != 0);
     }
 }
