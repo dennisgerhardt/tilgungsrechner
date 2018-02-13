@@ -6,8 +6,8 @@ import java.time.temporal.TemporalAdjusters;
 public final class DateUtil {
 
     public static LocalDate lastDayOfMonth(final int plusMonth) {
-        final LocalDate currentDayOfMonth = LocalDate.now();
-        final LocalDate lastDayOfMonth = currentDayOfMonth.plusMonths(plusMonth).with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate currentDayOfMonth = LocalDate.now();
+        LocalDate lastDayOfMonth = currentDayOfMonth.plusMonths(plusMonth).with(TemporalAdjusters.lastDayOfMonth());
 
         return lastDayOfMonth;
     }

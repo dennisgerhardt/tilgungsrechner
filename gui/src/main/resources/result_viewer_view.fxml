@@ -1,10 +1,25 @@
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.*?>
+
 <GridPane alignment="CENTER" hgap="7.0" vgap="7.0"
           xmlns:fx="http://javafx.com/fxml/1"
           xmlns="http://javafx.com/javafx/2.2"
           fx:controller="com.mycompany.tilgungsrechner.controller.ResultViewerController">
 
-    <Label text="%label.greeting"/>
+    <TableView fx:id="repaymentSchedule" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2" minWidth="600">
+        <columns>
+            <TableColumn text="%table.column.date" fx:id="colDate"/>
+            <TableColumn text="%table.column.debt" fx:id="colDebt"/>
+            <TableColumn text="%table.column.interest" fx:id="colInterest"/>
+            <TableColumn text="%table.column.repayment" fx:id="colRepayment"/>
+            <TableColumn text="%table.column.fixedrate" fx:id="colFixedRate"/>
+        </columns>
+    </TableView>
+
+    <Label text="%label.backto.input" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+    <Button fx:id="backButton" text="%button.back" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
 </GridPane>

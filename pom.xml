@@ -18,6 +18,7 @@
     </modules>
 
     <properties>
+        <app.version>1.0-Final</app.version>
         <java.lang.level>1.8</java.lang.level>
         <maven.compiler.source>${java.lang.level}</maven.compiler.source>
         <maven.compiler.target>${java.lang.level}</maven.compiler.target>

@@ -14,8 +14,9 @@ public final class ServiceResolver {
         SERVICES = new HashMap<>();
 
         SERVICES.put(IValidation.class, constructImplementation(IValidation.class.getSimpleName()));
-        SERVICES.put(ICalculator.class, constructImplementation(ICalculator.class.getSimpleName()));
+        SERVICES.put(IRepaymentSchedule.class, constructImplementation(IRepaymentSchedule.class.getSimpleName()));
         SERVICES.put(ISceneManager.class, constructImplementation(ISceneManager.class.getSimpleName()));
+        SERVICES.put(IStorage.class, constructImplementation(IStorage.class.getSimpleName()));
     }
 
     public static<T> T resolve(Class<T> key) {
@@ -26,10 +27,9 @@ public final class ServiceResolver {
         final String className = interfaceName.substring(1) + IMPL_SUFFIX;
 
         try {
-
-            final Class<?> aClass = Class.forName("com.mycompany.tilgungsrechner.service." + className);
-            final Constructor<?> constructor = aClass.getDeclaredConstructor();
-            final Object o = constructor.newInstance();
+            Class<?> aClass = Class.forName("com.mycompany.tilgungsrechner.service." + className);
+            Constructor<?> constructor = aClass.getDeclaredConstructor();
+            Object o = constructor.newInstance();
 
             return o;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException

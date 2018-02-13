@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 public class ValidationImpl implements IValidation {
 
-    private static final Pattern VALID_NUMBER = Pattern.compile("^[0-9]+([.,]\\d{1,2})?$");
-    private static final Pattern VALID_PERCENTAGE = Pattern.compile("^\\d{1,2}([.,]\\d{1,2})?$");
+    private static final Pattern VALID_NUMBER = Pattern.compile("^[0-9]+([.]\\d{1,2})?$");
+    private static final Pattern VALID_PERCENTAGE = Pattern.compile("^\\d{1,2}([.]\\d{1,2})?$");
     private static final Pattern VALID_DURATION = Pattern.compile("^\\d{1,2}$");
 
     final Predicate<String> IsNotNullOrEmpty;
