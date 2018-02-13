@@ -2,9 +2,13 @@ package com.mycompany.tilgungsrechner.data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.Locale;
 
 public final class Money {
+
+    private static final NumberFormat FORMAT = NumberFormat.getCurrencyInstance(new Locale("de", "DE"));
 
     private final Currency currency;
     private final BigDecimal amount;
@@ -15,11 +19,11 @@ public final class Money {
     }
 
     public String getFormatted() {
-        return amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP) + " " + currency.getSymbol();
+        return FORMAT.format(amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP).doubleValue());
     }
 
     public String getNegatedFormatted() {
-        return amount.negate().setScale(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP) + " " + currency.getSymbol();
+        return FORMAT.format(amount.negate().setScale(currency.getDefaultFractionDigits(), RoundingMode.HALF_UP).doubleValue());
     }
 
 

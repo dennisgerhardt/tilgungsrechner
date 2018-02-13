@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>executor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${app.version}</version>
     <name>tilgungsrechner-exe</name>
     <packaging>jar</packaging>
     <parent>
         <groupId>com.mycompany.tilgungsrechner</groupId>
         <artifactId>tilgungsrechner</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${app.version}</version>
     </parent>
 
     <properties>
@@ -24,17 +24,17 @@
         <dependency>
             <groupId>com.mycompany.tilgungsrechner</groupId>
             <artifactId>share</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${app.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mycompany.tilgungsrechner</groupId>
             <artifactId>calculator</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${app.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mycompany.tilgungsrechner</groupId>
             <artifactId>gui</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${app.version}</version>
         </dependency>
     </dependencies>
 

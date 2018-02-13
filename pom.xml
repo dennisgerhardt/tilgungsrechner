@@ -6,7 +6,7 @@
 
     <groupId>com.mycompany.tilgungsrechner</groupId>
     <artifactId>tilgungsrechner</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${app.version}</version>
     <name>tilgungsrechner-all</name>
     <packaging>pom</packaging>
 

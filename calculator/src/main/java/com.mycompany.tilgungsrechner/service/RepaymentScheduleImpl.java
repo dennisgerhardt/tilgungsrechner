@@ -16,15 +16,14 @@ import java.util.stream.IntStream;
 
 public class RepaymentScheduleImpl implements IRepaymentSchedule {
 
-    private final IValidation validation;
+    //private final IValidation validation;
 
     RepaymentScheduleImpl() {
-        this.validation = ServiceResolver.resolve(IValidation.class);
+        //this.validation = ServiceResolver.resolve(IValidation.class);
     }
 
     public Schedule createSchedule(CalculatorInput calculatorInput) throws ValidationException {
-        System.out.println(calculatorInput.toString());
-        validation.validate(calculatorInput);
+        //validation.validate(calculatorInput);
 
         final int totalMonths = Integer.valueOf(calculatorInput.getDurationOfDebit()) * Month.values().length;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.LL.yyyy");

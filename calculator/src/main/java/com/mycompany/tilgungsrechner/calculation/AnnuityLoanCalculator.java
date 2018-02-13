@@ -66,7 +66,7 @@ final class AnnuityLoanCalculator extends Calculator {
         return debt;
     }
 
-    BigDecimal calculateFixedRate(BigDecimal debt, BigDecimal debitRate, String repaymentRate)  {
+    private BigDecimal calculateFixedRate(BigDecimal debt, BigDecimal debitRate, String repaymentRate)  {
         BigDecimal firstInterestRate = debt.multiply(debitRate.divide(Calculator.Twelve, Calculator.InternalRounding));
         BigDecimal firstRepaymentRate = debt.multiply(new BigDecimal(repaymentRate)
                 .divide(Calculator.OneHundred, Calculator.InternalRounding)
