@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
-import java.util.stream.IntStream;
+import java.util.Optional;
 
 public class RepaymentScheduleImpl implements IRepaymentSchedule {
 
@@ -31,15 +31,14 @@ public class RepaymentScheduleImpl implements IRepaymentSchedule {
         Calculator calculator = CalculatorFactory.AnnuityLoan(calculatorInput);
 
         LinkedList<ScheduleItem> scheduleItems = new LinkedList<>();
-        IntStream.range(0, totalMonths).forEach(i -> {
-            ScheduleItem item = calculator.calculate();
-            item.setRateDate(DateUtil.lastDayOfMonth(i + 1).format(formatter));
-            scheduleItems.add(item);
-        });
+        for (int i = 0; i <= totalMonths && !calculator.earlyTerminated(); i++) {
+            ScheduleItem item = calculator.calculate(Optional.of(i < totalMonths));
 
-        ScheduleItem overview = calculator.overview();
-        overview.setRateDate("Zinsbindungsende"); //oh no
-        scheduleItems.addLast(overview);
+            if (item.getRateDate() == null) {
+                item.setRateDate(DateUtil.lastDayOfMonth(i + 1).format(formatter));
+            }
+            scheduleItems.add(item);
+        }
 
         ScheduleItem first = new ScheduleItem(new BigDecimal(calculatorInput.getLoanAmount()),
                 new BigDecimal("0.00"),

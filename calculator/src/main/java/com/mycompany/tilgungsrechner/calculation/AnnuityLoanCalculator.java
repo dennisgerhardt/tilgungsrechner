@@ -5,8 +5,9 @@ import com.mycompany.tilgungsrechner.data.ScheduleItem;
 
 import java.math.BigDecimal;
 import java.time.Month;
+import java.util.Optional;
 
-final class AnnuityLoanCalculator extends Calculator {
+final class AnnuityLoanCalculator extends Calculator<Boolean> {
 
     private static final BigDecimal MONTHS_COUNT = new BigDecimal(String.valueOf(Month.values().length));
 
@@ -15,6 +16,7 @@ final class AnnuityLoanCalculator extends Calculator {
 
     private BigDecimal debitAmount, repaymentRate, debt;
     private BigDecimal sumDebitAmount, sumRepaymentRate;
+    private boolean earlyTerminated;
 
     AnnuityLoanCalculator(CalculatorInput in) {
         debt = new BigDecimal(in.getLoanAmount());
@@ -26,16 +28,20 @@ final class AnnuityLoanCalculator extends Calculator {
     }
 
     @Override
-    public ScheduleItem calculate() {
-        BigDecimal debitAmount = calculateDebitAmount();
-        sumDebitAmount = sumDebitAmount.add(debitAmount);
+    public ScheduleItem calculate(Optional<Boolean> optionalParameter) {
+        if (!optionalParameter.get() || isEarlyTerminated()) {
+            return overview();
+        } else {
+            BigDecimal debitAmount = calculateDebitAmount();
+            sumDebitAmount = sumDebitAmount.add(debitAmount);
 
-        BigDecimal repaymentRate = calculateRepaymentRate();
-        sumRepaymentRate = sumRepaymentRate.add(repaymentRate);
+            BigDecimal repaymentRate = calculateRepaymentRate();
+            sumRepaymentRate = sumRepaymentRate.add(repaymentRate);
 
-        BigDecimal remainingDebt = calculateRemainingDebt();
+            BigDecimal remainingDebt = calculateRemainingDebt();
 
-        return new ScheduleItem(remainingDebt, debitAmount, repaymentRate, fixedRate);
+            return new ScheduleItem(remainingDebt, debitAmount, repaymentRate, fixedRate);
+        }
     }
 
     @Override
@@ -44,7 +50,15 @@ final class AnnuityLoanCalculator extends Calculator {
             throw new UnsupportedOperationException("for overview-result call calculate() first");
         }
 
-        return new ScheduleItem(debt, sumDebitAmount, sumRepaymentRate, sumDebitAmount.add(sumRepaymentRate));
+        ScheduleItem overview = new ScheduleItem(debt, sumDebitAmount, sumRepaymentRate, sumDebitAmount.add(sumRepaymentRate));
+        overview.setRateDate("Zinsbindungsende");
+
+        return overview;
+    }
+
+    @Override
+    public boolean earlyTerminated() {
+        return earlyTerminated;
     }
 
     @Override
@@ -73,5 +87,12 @@ final class AnnuityLoanCalculator extends Calculator {
                 .divide(Calculator.Twelve, Calculator.InternalRounding));
 
         return firstInterestRate.add(firstRepaymentRate).setScale(Calculator.PRECISION, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private boolean isEarlyTerminated() {
+        earlyTerminated = debt.subtract(fixedRate).compareTo(BigDecimal.ZERO) == -1 ||
+                debt.subtract(fixedRate).compareTo(BigDecimal.ZERO) == 0;
+
+        return earlyTerminated;
     }
 }

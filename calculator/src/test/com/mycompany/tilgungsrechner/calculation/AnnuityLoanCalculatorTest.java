@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class AnnuityLoanCalculatorTest {
 
@@ -21,7 +22,7 @@ public class AnnuityLoanCalculatorTest {
 
     @Test
     public void testWholeAlgorithmFirstIteration() {
-        final ScheduleItem item = calculator.calculate();
+        final ScheduleItem item = calculator.calculate(Optional.of(true));
 
         Assert.assertEquals(item.getDebt(), "-99.833,34 €");
         Assert.assertEquals(item.getDebitAmount(), "176,67 €");
@@ -31,8 +32,8 @@ public class AnnuityLoanCalculatorTest {
 
     @Test
     public void testWholeAlgorithmSecondIteration() {
-        calculator.calculate();
-        final ScheduleItem second = calculator.calculate();
+        calculator.calculate(Optional.of(true));
+        final ScheduleItem second = calculator.calculate(Optional.of(true));
 
         Assert.assertEquals(second.getDebt(), "-99.666,38 €");
         Assert.assertEquals(second.getDebitAmount(), "176,37 €");
